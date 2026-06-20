@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FacturaIA Reval</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">F</span>
+        <div>
+          <strong>FacturaIA Reval</strong>
+          <span>Extractor y conector de comprobantes</span>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Secciones">
+        <button class="tab active" type="button">Procesar</button>
+        <button class="tab" type="button">Historial</button>
+        <button class="tab" type="button">API</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="workspace">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Carga de comprobantes</p>
+            <h1>Leer factura, validar datos y preparar inserción</h1>
+          </div>
+          <button class="primary-button" id="processButton" type="button">
+            Procesar factura
+          </button>
+        </div>
+
+        <div class="process-grid">
+          <section class="upload-panel">
+            <label class="dropzone" for="invoiceFile">
+              <input id="invoiceFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" />
+              <span class="upload-icon">+</span>
+              <strong>Subir PDF o imagen</strong>
+              <small>Factura AFIP, ticket o comprobante escaneado</small>
+            </label>
+
+            <div class="invoice-preview" aria-label="Vista previa de factura">
+              <img src="./invoice-preview.png" alt="Factura de ejemplo" />
+            </div>
+          </section>
+
+          <section class="status-panel" aria-label="Estado del proceso">
+            <div class="step done">
+              <span>1</span>
+              <div>
+                <strong>Archivo recibido</strong>
+                <small id="fileName">Esperando comprobante</small>
+              </div>
+            </div>
+            <div class="step active">
+              <span>2</span>
+              <div>
+                <strong>Lectura inteligente</strong>
+                <small>Extracción de CUIT, importes, IVA e ítems</small>
+              </div>
+            </div>
+            <div class="step">
+              <span>3</span>
+              <div>
+                <strong>Validación</strong>
+                <small>Formato JSON y reglas de negocio</small>
+              </div>
+            </div>
+            <div class="step">
+              <span>4</span>
+              <div>
+                <strong>Inserción API</strong>
+                <small>Listo para enviar a Revalsoft</small>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="json-section">
+          <div class="section-title">
+            <h2>JSON extraído</h2>
+            <div class="actions">
+              <button class="ghost-button" type="button" id="copyJson">Copiar</button>
+              <button class="secondary-button" type="button">Enviar a API</button>
+            </div>
+          </div>
+          <pre id="jsonOutput">{
+  "estado": "pendiente",
+  "mensaje": "Subí una factura y presioná procesar."
+}</pre>
+        </section>
+      </section>
+
+      <aside class="side">
+        <section class="api-panel">
+          <p class="eyebrow">Conector</p>
+          <h2>Revalsoft testing</h2>
+          <label>
+            URL base
+            <input type="text" value="https://app.revalsoft.com.ar" />
+          </label>
+          <label>
+            Endpoint
+            <input type="text" value="/api/facturas" />
+          </label>
+          <label>
+            Token
+            <input type="password" value="testing-token" />
+          </label>
+          <div class="connection-state">
+            <span></span>
+            Ambiente de prueba configurado
+          </div>
+        </section>
+
+        <section class="metric-panel">
+          <div>
+            <strong>98%</strong>
+            <span>campos detectados</span>
+          </div>
+          <div>
+            <strong>4</strong>
+            <span>validaciones activas</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <span>errores pendientes</span>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

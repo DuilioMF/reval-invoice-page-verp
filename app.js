@@ -372,7 +372,10 @@ sendToRevalsoft.addEventListener("click", async () => {
     });
 
     const orderData = await orderResp.json();
-    if (!orderData.ok) throw new Error(orderData.message || "Error al crear la orden");
+    if (!orderData.ok) {
+      // Capturamos el mensaje del backend para mostrarlo
+      throw new Error(orderData.message || orderData.error || "Error no especificado por el servidor Revalsoft");
+    }
 
     const orderId   = orderData.data?.id;
     const orderName = orderData.data?.name;
@@ -380,6 +383,8 @@ sendToRevalsoft.addEventListener("click", async () => {
     updateStep(3, "done");
     updateRvsState(true, `Orden ${orderName} creada ✓`);
 
+    document.querySelector("#orderResultTitle").innerHTML = "✅ Orden creada en Revalsoft";
+    document.querySelector("#orderResultTitle").style.color = "#10b981";
     orderResultSection.style.display = "block";
     orderResult.textContent = JSON.stringify({
       resultado: "✅ Orden creada exitosamente",
@@ -392,8 +397,10 @@ sendToRevalsoft.addEventListener("click", async () => {
 
   } catch (err) {
     updateRvsState(false, "Error: " + err.message);
+    document.querySelector("#orderResultTitle").innerHTML = "❌ Error en Revalsoft";
+    document.querySelector("#orderResultTitle").style.color = "#ef4444";
     orderResultSection.style.display = "block";
-    orderResult.textContent = `❌ Error:\n${err.message}`;
+    orderResult.textContent = `Detalle del Error:\n${err.message}`;
     metricErrors.textContent = 1;
   } finally {
     sendToRevalsoft.disabled = false;
@@ -408,4 +415,20 @@ copyJson.addEventListener("click", async () => {
     copyJson.textContent = "Copiado";
     setTimeout(() => { copyJson.textContent = "Copiar"; }, 1200);
   } catch {}
+});
+
+// ---- Lógica de Zoom en Factura Original ----
+const realInvoiceImg = document.querySelector("#realInvoiceImg");
+const zoomModal      = document.querySelector("#zoomModal");
+const zoomedImg      = document.querySelector("#zoomedImg");
+
+realInvoiceImg.addEventListener("dblclick", () => {
+  if (realInvoiceImg.src) {
+    zoomedImg.src = realInvoiceImg.src;
+    zoomModal.style.display = "flex";
+  }
+});
+
+zoomModal.addEventListener("click", () => {
+  zoomModal.style.display = "none";
 });

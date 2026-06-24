@@ -43,8 +43,8 @@
               <small>Factura AFIP, ticket o comprobante escaneado</small>
             </label>
 
-            <div class="invoice-preview" aria-label="Vista previa de factura">
-              <img id="previewImg" src="./invoice-preview.png" alt="Factura de ejemplo" />
+            <div class="invoice-preview" aria-label="Vista previa de factura" style="display: none;">
+              <img id="previewImg" src="" alt="Factura de ejemplo" />
             </div>
           </section>
 
@@ -84,11 +84,11 @@
           <!-- Columna izquierda: Imagen real subida -->
           <div style="border-right: 1px solid var(--glass-border); display: flex; flex-direction: column;">
             <div class="section-title">
-              <h2>Factura original subida</h2>
+              <h2>Factura original subida <small style="font-size: 10px; color: var(--primary); font-weight: normal; margin-left: 8px;">(Doble clic para ampliar)</small></h2>
             </div>
             <div id="originalContainer" style="flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg3); padding: 20px; overflow: hidden; min-height: 350px;">
               <p id="originalPlaceholder" style="color: var(--text-dim); text-align: center;">Subí una factura para ver el comprobante original acá</p>
-              <img id="realInvoiceImg" src="" alt="Factura original" style="max-width: 100%; max-height: 350px; border-radius: var(--radius-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: none; object-fit: contain;" />
+              <img id="realInvoiceImg" src="" alt="Factura original" style="max-width: 100%; max-height: 350px; border-radius: var(--radius-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: none; object-fit: contain; cursor: zoom-in;" title="Doble clic para ampliar" />
             </div>
           </div>
 
@@ -154,11 +154,16 @@
         <!-- JSON Oculto (sigue sirviendo para la lógica de app.js) -->
         <pre id="jsonOutput" style="display: none;"></pre>
 
+        <!-- Modal para ver factura original ampliada -->
+        <div id="zoomModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out;">
+          <span style="position: absolute; top: 20px; right: 30px; color: #fff; font-size: 30px; font-weight: bold; cursor: pointer;">&times;</span>
+          <img id="zoomedImg" src="" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: var(--radius-sm); box-shadow: 0 10px 40px rgba(0,0,0,0.8);" />
+        </div>
 
         <!-- Resultado de la orden creada -->
         <section class="json-section" id="orderResultSection" style="display:none;">
           <div class="section-title">
-            <h2>✅ Orden creada en Revalsoft</h2>
+            <h2 id="orderResultTitle">✅ Orden creada en Revalsoft</h2>
           </div>
           <pre id="orderResult"></pre>
         </section>

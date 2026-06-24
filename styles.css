@@ -453,18 +453,18 @@ input[type="password"]:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 4px;
-  color: var(--green);
+  margin-top: 6px;
   font-size: 13px;
   font-weight: 700;
+  line-height: 1;
 }
 
-.connection-state span {
+.connection-state span:first-child {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
+  flex-shrink: 0;
+  display: inline-block;
 }
 
 .metric-panel {

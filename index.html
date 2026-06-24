@@ -15,11 +15,16 @@
           <span>Extractor y conector de comprobantes</span>
         </div>
       </div>
-      <nav class="tabs" aria-label="Secciones">
-        <button class="tab active" type="button">Procesar</button>
-        <button class="tab" type="button">Historial</button>
-        <button class="tab" type="button">API</button>
-      </nav>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <nav class="tabs" aria-label="Secciones">
+          <button id="tabProcesar" class="tab active" type="button">Procesar</button>
+          <button class="tab" type="button">Historial</button>
+          <button id="tabApi" class="tab" type="button">API</button>
+        </nav>
+        <button id="themeToggle" type="button" class="ghost-button" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px;" title="Cambiar Tema">
+          🌙
+        </button>
+      </div>
     </header>
 
     <main class="layout">
@@ -172,7 +177,7 @@
 
       <aside class="side">
         <!-- Motor IA -->
-        <section class="api-panel">
+        <section class="api-panel" id="panelMotorIA" style="display: none;">
           <p class="eyebrow">Motor IA</p>
           <h2>Gemini API</h2>
           <label>
@@ -186,7 +191,7 @@
         </section>
 
         <!-- Conector Revalsoft — valores desde config.js -->
-        <section class="api-panel">
+        <section class="api-panel" id="panelConector" style="display: none;">
           <p class="eyebrow">Conector</p>
           <h2>Revalsoft</h2>
           <label>

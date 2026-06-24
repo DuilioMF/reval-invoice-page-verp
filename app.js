@@ -432,3 +432,53 @@ realInvoiceImg.addEventListener("dblclick", () => {
 zoomModal.addEventListener("click", () => {
   zoomModal.style.display = "none";
 });
+
+// ================================================================
+//  Tema Día / Noche
+// ================================================================
+const themeToggle = document.querySelector("#themeToggle");
+const savedTheme = localStorage.getItem("facturaIA_theme");
+
+if (savedTheme === "light") {
+  document.body.classList.add("light-theme");
+  themeToggle.textContent = "☀️";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+  const isLight = document.body.classList.contains("light-theme");
+  themeToggle.textContent = isLight ? "☀️" : "🌙";
+  localStorage.setItem("facturaIA_theme", isLight ? "light" : "dark");
+});
+
+// ================================================================
+//  Pestaña API — Mostrar / Ocultar paneles Motor IA y Conector
+// ================================================================
+const tabApi       = document.querySelector("#tabApi");
+const tabProcesar  = document.querySelector("#tabProcesar");
+const panelMotorIA = document.querySelector("#panelMotorIA");
+const panelConector= document.querySelector("#panelConector");
+const allTabs      = document.querySelectorAll(".tab");
+
+tabApi.addEventListener("click", () => {
+  const isActive = tabApi.classList.contains("active");
+  // Toggle: si ya está activo, volver a Procesar
+  if (isActive) {
+    tabApi.classList.remove("active");
+    tabProcesar.classList.add("active");
+    panelMotorIA.style.display  = "none";
+    panelConector.style.display = "none";
+  } else {
+    allTabs.forEach(t => t.classList.remove("active"));
+    tabApi.classList.add("active");
+    panelMotorIA.style.display  = "block";
+    panelConector.style.display = "block";
+  }
+});
+
+tabProcesar.addEventListener("click", () => {
+  allTabs.forEach(t => t.classList.remove("active"));
+  tabProcesar.classList.add("active");
+  panelMotorIA.style.display  = "none";
+  panelConector.style.display = "none";
+});

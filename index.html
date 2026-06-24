@@ -44,7 +44,7 @@
             </label>
 
             <div class="invoice-preview" aria-label="Vista previa de factura">
-              <img src="./invoice-preview.png" alt="Factura de ejemplo" />
+              <img id="previewImg" src="./invoice-preview.png" alt="Factura de ejemplo" />
             </div>
           </section>
 
@@ -85,7 +85,9 @@
             <h2>JSON extraído</h2>
             <div class="actions">
               <button class="ghost-button" type="button" id="copyJson">Copiar</button>
-              <button class="secondary-button" type="button">Enviar a API</button>
+              <button class="secondary-button" type="button" id="sendToRevalsoft" disabled>
+                Crear en Revalsoft
+              </button>
             </div>
           </div>
           <pre id="jsonOutput">{
@@ -93,47 +95,77 @@
   "mensaje": "Subí una factura y presioná procesar."
 }</pre>
         </section>
+
+        <!-- Resultado de la orden creada -->
+        <section class="json-section" id="orderResultSection" style="display:none;">
+          <div class="section-title">
+            <h2>✅ Orden creada en Revalsoft</h2>
+          </div>
+          <pre id="orderResult"></pre>
+        </section>
+
       </section>
 
       <aside class="side">
+        <!-- Motor IA -->
+        <section class="api-panel">
+          <p class="eyebrow">Motor IA</p>
+          <h2>Gemini API</h2>
+          <label>
+            API Key
+            <input type="password" id="geminiKey" placeholder="Ingresa tu API Key de Gemini" />
+          </label>
+          <div class="connection-state" id="geminiState" style="color: var(--text-dim);">
+            <span id="geminiStateIndicator" style="background: var(--text-dim); box-shadow: none;"></span>
+            <span id="geminiStateText">API Key requerida</span>
+          </div>
+        </section>
+
+        <!-- Conector Revalsoft — valores desde config.js -->
         <section class="api-panel">
           <p class="eyebrow">Conector</p>
-          <h2>Revalsoft testing</h2>
+          <h2>Revalsoft</h2>
           <label>
-            URL base
-            <input type="text" value="https://app.revalsoft.com.ar" />
+            URL servidor
+            <input type="text" id="cfgBaseUrl" />
           </label>
           <label>
-            Endpoint
-            <input type="text" value="/api/facturas" />
+            Empresa (company ID)
+            <input type="text" id="cfgCompany" />
           </label>
           <label>
-            Token
-            <input type="password" value="testing-token" />
+            Usuario
+            <input type="text" id="cfgEmail" />
           </label>
-          <div class="connection-state">
-            <span></span>
-            Ambiente de prueba configurado
+          <label>
+            Contraseña
+            <input type="password" id="cfgPassword" />
+          </label>
+          <div class="connection-state" id="rvsState" style="color: var(--text-dim);">
+            <span id="rvsStateIndicator" style="background: var(--text-dim); box-shadow: none;"></span>
+            <span id="rvsStateText">Sin conectar</span>
           </div>
         </section>
 
         <section class="metric-panel">
           <div>
-            <strong>98%</strong>
+            <strong id="metricFields">—</strong>
             <span>campos detectados</span>
           </div>
           <div>
-            <strong>4</strong>
-            <span>validaciones activas</span>
+            <strong id="metricItems">—</strong>
+            <span>ítems en factura</span>
           </div>
           <div>
-            <strong>0</strong>
+            <strong id="metricErrors">—</strong>
             <span>errores pendientes</span>
           </div>
         </section>
       </aside>
     </main>
 
+    <!-- config.js se carga PRIMERO para que app.js pueda leer CONFIG -->
+    <script src="./config.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

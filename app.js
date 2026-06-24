@@ -93,7 +93,16 @@ fileInput.addEventListener("change", () => {
     // Mostrar preview si es imagen
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
-      reader.onload = e => { previewImg.src = e.target.result; };
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        
+        // Actualizar contenedor de factura original en la sección inferior
+        const realInvoiceImg = document.querySelector("#realInvoiceImg");
+        const originalPlaceholder = document.querySelector("#originalPlaceholder");
+        realInvoiceImg.src = e.target.result;
+        realInvoiceImg.style.display = "block";
+        originalPlaceholder.style.display = "none";
+      };
       reader.readAsDataURL(file);
     }
   }
@@ -123,6 +132,13 @@ processButton.addEventListener("click", async () => {
   processButton.textContent = "Procesando...";
   sendToRevalsoft.disabled = true;
   orderResultSection.style.display = "none";
+  
+  // Ocultar factura previa y mostrar placeholder
+  document.querySelector("#renderedInvoice").style.display = "none";
+  const transformedPlaceholder = document.querySelector("#transformedPlaceholder");
+  transformedPlaceholder.style.display = "block";
+  transformedPlaceholder.textContent = "Iniciando lectura con Inteligencia Artificial...";
+  
   jsonOutput.textContent = "Iniciando lectura con Inteligencia Artificial...";
   updateStep(0, "done"); updateStep(1, "active"); updateStep(2, ""); updateStep(3, "");
 
@@ -144,6 +160,7 @@ Esquema requerido:
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.gemini.model}:generateContent?key=${apiKey}`;
     jsonOutput.textContent = "Analizando con Gemini...";
+    transformedPlaceholder.textContent = "Analizando factura con Gemini...";
 
     const resp = await fetch(url, {
       method: "POST",
@@ -160,6 +177,7 @@ Esquema requerido:
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
     updateStep(1, "done"); updateStep(2, "active");
     jsonOutput.textContent = "Validando estructura...";
+    transformedPlaceholder.textContent = "Validando estructura de datos...";
 
     // Limpiar markdown si el modelo los agregó
     text = text.trim().replace(/^```json/, "").replace(/^```/, "").replace(/```$/, "").trim();
@@ -168,6 +186,44 @@ Esquema requerido:
       const parsed = JSON.parse(text);
       updateStep(2, "done"); updateStep(3, "active");
       jsonOutput.textContent = JSON.stringify(parsed, null, 2);
+
+      // --- Renderizar factura en pantalla ---
+      transformedPlaceholder.style.display = "none";
+      const renderedInvoice = document.querySelector("#renderedInvoice");
+      
+      // Actualizar datos de cabecera
+      document.querySelector("#invType").textContent = parsed.comprobante?.tipo || "FACTURA";
+      document.querySelector("#invNumber").textContent = `N° ${parsed.comprobante?.punto_venta || "0000"}-${parsed.comprobante?.numero || "00000000"}`;
+      
+      // Proveedor y Cliente
+      document.querySelector("#invProvName").textContent = parsed.proveedor?.razon_social || "—";
+      document.querySelector("#invProvCuit").textContent = `CUIT: ${parsed.proveedor?.cuit || "—"}`;
+      document.querySelector("#invCliName").textContent = parsed.cliente?.razon_social || "—";
+      document.querySelector("#invCliCuit").textContent = `CUIT: ${parsed.cliente?.cuit || "—"}`;
+      
+      // Items de la tabla
+      const tbody = document.querySelector("#invItemsBody");
+      tbody.innerHTML = "";
+      (parsed.items || []).forEach(item => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid #dee2e6";
+        tr.innerHTML = `
+          <td style="padding: 6px; color: #495057;">${item.descripcion}</td>
+          <td style="padding: 6px; text-align: center; color: #495057;">${item.cantidad}</td>
+          <td style="padding: 6px; text-align: right; color: #495057;">$${item.precio_unitario.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+          <td style="padding: 6px; text-align: right; font-weight: bold; color: #212529;">$${item.total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      // Totales
+      const formatCurr = (val) => val ? `$${val.toLocaleString('es-AR', {minimumFractionDigits: 2})}` : "$0.00";
+      document.querySelector("#invSubtotal").textContent = formatCurr(parsed.totales?.subtotal || parsed.totales?.subtotal_gravado);
+      document.querySelector("#invIva").textContent = formatCurr(parsed.totales?.iva_21);
+      document.querySelector("#invTotal").textContent = formatCurr(parsed.totales?.total);
+
+      // Mostrar factura
+      renderedInvoice.style.display = "flex";
 
       // Actualizar métricas
       const itemCount = parsed.items?.length || 0;
@@ -178,14 +234,18 @@ Esquema requerido:
       // Habilitar botón de envío
       sendToRevalsoft.disabled = false;
 
-    } catch {
+    } catch (errParse) {
       updateStep(2, "active");
-      jsonOutput.textContent = `Error al parsear JSON:\n\n${text}`;
+      transformedPlaceholder.style.display = "block";
+      transformedPlaceholder.textContent = "Error al parsear el JSON de respuesta.";
+      jsonOutput.textContent = `Error al parsear JSON:\n\n${text}\n\nDetalle: ${errParse.message}`;
       metricErrors.textContent = 1;
     }
 
   } catch (err) {
     updateStep(1, "active");
+    transformedPlaceholder.style.display = "block";
+    transformedPlaceholder.textContent = `Error: ${err.message}`;
     jsonOutput.textContent = `Error: ${err.message}`;
     metricErrors.textContent = 1;
   } finally {

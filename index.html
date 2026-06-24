@@ -80,21 +80,80 @@
           </section>
         </div>
 
-        <section class="json-section">
-          <div class="section-title">
-            <h2>JSON extraído</h2>
-            <div class="actions">
-              <button class="ghost-button" type="button" id="copyJson">Copiar</button>
-              <button class="secondary-button" type="button" id="sendToRevalsoft" disabled>
-                Crear en Revalsoft
-              </button>
+        <section class="json-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 400px; border-bottom: 0;">
+          <!-- Columna izquierda: Imagen real subida -->
+          <div style="border-right: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+            <div class="section-title">
+              <h2>Factura original subida</h2>
+            </div>
+            <div id="originalContainer" style="flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg3); padding: 20px; overflow: hidden; min-height: 350px;">
+              <p id="originalPlaceholder" style="color: var(--text-dim); text-align: center;">Subí una factura para ver el comprobante original acá</p>
+              <img id="realInvoiceImg" src="" alt="Factura original" style="max-width: 100%; max-height: 350px; border-radius: var(--radius-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: none; object-fit: contain;" />
             </div>
           </div>
-          <pre id="jsonOutput">{
-  "estado": "pendiente",
-  "mensaje": "Subí una factura y presioná procesar."
-}</pre>
+
+          <!-- Columna derecha: Factura procesada / transformada -->
+          <div style="display: flex; flex-direction: column;">
+            <div class="section-title">
+              <h2>Factura transformada (IA)</h2>
+              <div class="actions">
+                <button class="ghost-button" type="button" id="copyJson">Copiar JSON</button>
+                <button class="secondary-button" type="button" id="sendToRevalsoft" disabled>
+                  Crear en Revalsoft
+                </button>
+              </div>
+            </div>
+            <div id="transformedContainer" style="flex: 1; background: var(--bg3); padding: 20px; min-height: 350px; overflow-y: auto; display: flex; align-items: center; justify-content: center;">
+              <!-- Placeholder inicial -->
+              <div id="transformedPlaceholder" style="color: var(--text-dim); text-align: center;">Esperando lectura...</div>
+
+              <!-- Factura Renderizada con datos reales -->
+              <div id="renderedInvoice" style="width: 100%; max-width: 420px; background: #ffffff; color: #1a1a1f; padding: 20px; border-radius: var(--radius-sm); box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 12px; display: none; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #ff6c4e; padding-bottom: 8px;">
+                  <div>
+                    <h3 id="invType" style="margin: 0; font-size: 16px; font-weight: 800; color: #ff6c4e;">FACTURA A</h3>
+                    <span id="invNumber" style="font-weight: 600; color: #495057;">N° 0001-00002839</span>
+                  </div>
+                  <span style="background: #ff6c4e; color: white; padding: 2px 6px; font-weight: bold; border-radius: 4px; font-size: 10px;">VERP</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">
+                  <div>
+                    <strong style="color: #ff6c4e; font-size: 9px; text-transform: uppercase;">Proveedor</strong>
+                    <div id="invProvName" style="font-weight: bold;">Proveedor Demo SA</div>
+                    <div id="invProvCuit">CUIT: 30-71234567-8</div>
+                  </div>
+                  <div>
+                    <strong style="color: #ff6c4e; font-size: 9px; text-transform: uppercase;">Cliente</strong>
+                    <div id="invCliName" style="font-weight: bold;">Cliente Demo</div>
+                    <div id="invCliCuit">CUIT: 30-87654321-2</div>
+                  </div>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin: 8px 0; text-align: left; font-size: 11px;">
+                  <thead>
+                    <tr style="background: #222228; color: white; font-weight: 800; font-size: 10px;">
+                      <th style="padding: 6px;">Descripción</th>
+                      <th style="padding: 6px; text-align: center;">Cant.</th>
+                      <th style="padding: 6px; text-align: right;">Unitario</th>
+                      <th style="padding: 6px; text-align: right;">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invItemsBody">
+                    <!-- Dinámico -->
+                  </tbody>
+                </table>
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end; border-top: 1px solid #dee2e6; padding-top: 8px; font-size: 11px;">
+                  <div>Subtotal: <span id="invSubtotal" style="font-weight: bold;">$0.00</span></div>
+                  <div>IVA (21%): <span id="invIva" style="font-weight: bold;">$0.00</span></div>
+                  <div style="font-size: 14px; color: #ff6c4e; margin-top: 4px;">Total: <span id="invTotal" style="font-weight: 800;">$0.00</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
+
+        <!-- JSON Oculto (sigue sirviendo para la lógica de app.js) -->
+        <pre id="jsonOutput" style="display: none;"></pre>
+
 
         <!-- Resultado de la orden creada -->
         <section class="json-section" id="orderResultSection" style="display:none;">

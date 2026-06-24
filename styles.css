@@ -2,24 +2,24 @@
 
 :root {
   color-scheme: dark;
-  --bg: #1a1a1f;
-  --bg2: #222228;
-  --bg3: #292a2d;
-  --text: #e8e8ef;
-  --text-dim: #868e96;
-  --primary: #ff6c4e;
-  --primary-glow: #ff522e;
-  --accent: #e44160;
-  --accent2: #ff8c6b;
-  --gradient: linear-gradient(135deg, #ff522e, #ff6c4e);
-  --gradient2: linear-gradient(135deg, #e44160, #ff6c4e);
-  --glass: rgba(255, 255, 255, 0.04);
+  --bg: #0b0f19;
+  --bg2: #111827;
+  --bg3: #1f2937;
+  --text: #f3f4f6;
+  --text-dim: #9ca3af;
+  --primary: #2563eb;
+  --primary-glow: #3b82f6;
+  --accent: #4f46e5;
+  --accent2: #818cf8;
+  --gradient: linear-gradient(135deg, #2563eb, #4f46e5);
+  --gradient2: linear-gradient(135deg, #4f46e5, #06b6d4);
+  --glass: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
   --radius: 16px;
   --radius-sm: 10px;
-  --green: #25d366;
-  --blue: #3b82f6;
-  --amber: #f97316;
+  --green: #10b981;
+  --blue: #2563eb;
+  --amber: #f59e0b;
   font-family: 'Montserrat', sans-serif;
 }
 

@@ -204,22 +204,40 @@ Esquema requerido:
       // Items de la tabla
       const tbody = document.querySelector("#invItemsBody");
       tbody.innerHTML = "";
+      
+      const cleanNum = (val) => {
+        if (typeof val === "number") return val;
+        if (typeof val === "string") {
+          // Limpieza de formatos argentinos: "415.855,00" -> 415855.00
+          let cleaned = val.replace(/\./g, "").replace(/,/g, ".");
+          let num = parseFloat(cleaned);
+          return isNaN(num) ? 0 : num;
+        }
+        return 0;
+      };
+
       (parsed.items || []).forEach(item => {
+        const cant = cleanNum(item.cantidad);
+        const unit = cleanNum(item.precio_unitario);
+        const tot = cleanNum(item.total);
         const tr = document.createElement("tr");
         tr.style.borderBottom = "1px solid #dee2e6";
         tr.innerHTML = `
           <td style="padding: 6px; color: #495057;">${item.descripcion}</td>
-          <td style="padding: 6px; text-align: center; color: #495057;">${item.cantidad}</td>
-          <td style="padding: 6px; text-align: right; color: #495057;">$${item.precio_unitario.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
-          <td style="padding: 6px; text-align: right; font-weight: bold; color: #212529;">$${item.total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+          <td style="padding: 6px; text-align: center; color: #495057;">${cant}</td>
+          <td style="padding: 6px; text-align: right; color: #495057;">$${unit.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+          <td style="padding: 6px; text-align: right; font-weight: bold; color: #212529;">$${tot.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
         `;
         tbody.appendChild(tr);
       });
       
       // Totales
-      const formatCurr = (val) => val ? `$${val.toLocaleString('es-AR', {minimumFractionDigits: 2})}` : "$0.00";
+      const formatCurr = (val) => {
+        const num = cleanNum(val);
+        return `$${num.toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      };
       document.querySelector("#invSubtotal").textContent = formatCurr(parsed.totales?.subtotal || parsed.totales?.subtotal_gravado);
-      document.querySelector("#invIva").textContent = formatCurr(parsed.totales?.iva_21);
+      document.querySelector("#invIva").textContent = formatCurr(parsed.totales?.iva_21 || parsed.totales?.iva_debito_fiscal);
       document.querySelector("#invTotal").textContent = formatCurr(parsed.totales?.total);
 
       // Mostrar factura
